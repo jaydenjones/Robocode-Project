@@ -8,6 +8,90 @@ import java.awt.*;
 
 public class HimalayanYeti extends TeamRobot
 {
+    public void run()
+    {
+        //turnLeft(getHeading());
+        while(true)
+        {
+            //set colors
+            setBodyColor(Color.blue);
+            setGunColor(Color.blue);
+            setRadarColor(Color.red);
+            setBulletColor(Color.blue);
+            setScanColor(Color.white);
+
+            //int degreeToTurn = 360;
+
+            ahead(50);
+            turnRight(360);
+
+
+
+            //configure the robot radar
+            //used roboWiki.net/wiki/Radar
+            //setAdjustGunForRobotTurn() and setAdjustRadarForGunTurn are called
+            // to turn the gun and radar independently of the tank
+            //setAdjustGunForRobotTurn(true);
+            //setAdjustRadarForGunTurn(true);
+
+        }
+    }
+
+
+
+    public void onScannedRobot(ScannedRobotEvent ev)
+    {
+        if(ev.getName().contains("HimalayanYeti") || ev.getName().contains("VirtualBoy"))
+        {
+            isTeammate(ev.getName());
+            return;
+        }
+
+
+        else
+        {
+            turnRight(ev.getBearing());
+            ahead(ev.getDistance() - 30);//try to ram into the scanned enemy robot
+            setFire(3);
+
+        }
+    }
+
+    public void onHitWall(HitWallEvent crash)
+    {
+        back(50);
+        turnRight(360);
+
+    }
+
+    public void onHitByBullet(HitByBulletEvent what)
+    {
+
+        //if the robot shooting me is is in front then move back
+        if(what.getBearing() < 90 && what.getBearing() > -90)
+        {
+            back(20);
+
+        }
+
+        //if the robot shooting me is in back then move front
+        else
+        {
+            ahead(20);
+        }
+
+
+    }
+
+
+
+}
+
+
+/*
+public class HimalayanYeti extends TeamRobot
+
+{
     //determine to turn clockwise or anticlockwise
     int toTurn = 1;
 
@@ -108,3 +192,6 @@ public class HimalayanYeti extends TeamRobot
 
 
 }
+
+*/
+
