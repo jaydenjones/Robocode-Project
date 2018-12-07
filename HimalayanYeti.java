@@ -10,7 +10,7 @@ public class HimalayanYeti extends TeamRobot
 {
     public void run()
     {
-        //turnLeft(getHeading());
+        
         while(true)
         {
             //set colors
@@ -20,7 +20,7 @@ public class HimalayanYeti extends TeamRobot
             setBulletColor(Color.blue);
             setScanColor(Color.white);
 
-            //int degreeToTurn = 360;
+
 
             ahead(50);
             turnRight(360);
@@ -50,33 +50,53 @@ public class HimalayanYeti extends TeamRobot
 
         else
         {
+            //turn toward the enemy
             turnRight(ev.getBearing());
-            ahead(ev.getDistance() - 30);//try to ram into the scanned enemy robot
+
+            //shoot the enemy with maximum power for maximum damage
             setFire(3);
+
+
 
         }
     }
 
     public void onHitWall(HitWallEvent crash)
     {
-        back(50);
-        turnRight(360);
+        //if the wall is at the front of the robot
+        if(crash.getBearing() < 90 && crash.getBearing() > -90)
+        {
+            back(50);
+            turnRight(360);
+        }
+
+        //if the wall is to the back of the robot
+        else
+            {
+                ahead(50);
+                turnRight(360);
+            }
+
 
     }
 
     public void onHitByBullet(HitByBulletEvent what)
     {
 
-        //if the robot shooting me is is in front then move back
+        //if the robot shooting me is is in front
         if(what.getBearing() < 90 && what.getBearing() > -90)
         {
-            back(20);
+            //turn left and move ahead
+            turnRight(-20);
+            ahead(30);
 
         }
 
-        //if the robot shooting me is in back then move front
+        //if the robot shooting me is in back
         else
         {
+            //turn right and move ahead
+            turnRight(20);
             ahead(20);
         }
 
