@@ -10,7 +10,7 @@ public class HimalayanYeti extends TeamRobot
 {
     public void run()
     {
-        
+
         while(true)
         {
             //set colors
@@ -41,7 +41,7 @@ public class HimalayanYeti extends TeamRobot
 
     public void onScannedRobot(ScannedRobotEvent ev)
     {
-        if(ev.getName().contains("HimalayanYeti") || ev.getName().contains("VirtualBoy"))
+        if(ev.getName().contains("HimalayanYeti") || ev.getName().contains("VirtualBoy") || ev.getName().contains("Caffeine"))
         {
             isTeammate(ev.getName());
             return;
