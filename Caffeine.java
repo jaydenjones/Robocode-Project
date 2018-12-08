@@ -4,31 +4,14 @@ import robocode.*;
 import robocode.util.Utils;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
-
-import static robocode.util.Utils.normalRelativeAngleDegrees;
 
 public class Caffeine extends TeamRobot
 {
 
-
-        // Set colors
-
-        //setAdjustGunForRobotTurn(true);
-        //setAdjustRadarForRobotTurn(true);
-        //fire divided by distance
-        //These are constants. One advantage of these is that the logic in them (such as 20-3*BULLET_POWER)
-        //does not use codespace, making them cheaper than putting the logic in the actual code.
-        //Our bulletpower.
-        //final static double BULLET_DAMAGE = BULLET_POWER * 4;//Formula for bullet damage.
-        //Formula for bullet speed.
-
-        //Variables
         static double dir = 1;
-        static double enemyDistance;
+        static double enemyDistance;//allows to check distance from previous round
 
         public void run () {
-        //RamFire Colors
             setBodyColor(Color.blue);
             setGunColor(Color.blue);
             setRadarColor(Color.red);
@@ -36,12 +19,13 @@ public class Caffeine extends TeamRobot
             setBulletColor(Color.blue);
 
 
-        setAdjustGunForRobotTurn(true);
-        setAdjustRadarForGunTurn(true);
-        setTurnRadarRight(361);
+        setAdjustGunForRobotTurn(true);//allows gun to turn separately from body
+        setAdjustRadarForGunTurn(true);//allows radar to turn separately from body
+        setTurnRadarRight(361);//keeps spinning radar if nothing found
     }
 
         public void onScannedRobot (ScannedRobotEvent e){
+            //makes sure team bots don't get hit
             if(e.getName().contains("Caffeine")||e.getName().contains("VirtualBoy")||e.getName().contains("HimalayanYeti"))
             {
                 isTeammate(e.getName());
@@ -50,32 +34,32 @@ public class Caffeine extends TeamRobot
 
 
             double absBearing = e.getBearing() + getHeading();//absolute Bearing of enemy
-            double BULLET_POWER = 3*Math.exp(-0.0018*(e.getDistance()));
-            double BULLET_SPEED = 20 - 3 * BULLET_POWER;
-            double turn=absBearing+21.12*Math.log(e.getDistance())-55;
+            double power = 3*Math.exp(-0.0018*(e.getDistance()));//created an excel trendplot to a map an exponential increase curve
+            double speed = 20 - 3 * power;
+            double turn=absBearing+21.12*Math.log(e.getDistance())-60;//created a function for a logarithmic turn that causes the bot to spiral inward
 
-
-
-            if(enemyDistance<(enemyDistance=e.getDistance())&&e.getDistance()>150)//50% without it
+            if(enemyDistance<(enemyDistance=e.getDistance())&&e.getDistance()>175)//creates more of a randomness further away to dodge bullets
             {
                 dir*=-1;
             }
 
         setTurnRight(Utils.normalRelativeAngleDegrees(turn - getHeading()));
 
-        setAhead(110 * dir);
+        setAhead(100 * dir);
 
+        //linear targeting system//cite robowiki linear targeting
+        double adjustAng=absBearing-getGunHeading();//the angle where the enemy is
+        double linearAprox;
+        double parallelAng=e.getHeading()-absBearing;//the lateral angle of the enemy robot
+        double yVelocity= e.getVelocity()*Math.sin(parallelAng);//the lateral velocity of the robot as it moves parallel
+        linearAprox=Math.asin(yVelocity/speed) * (Math.random()*-0.2+1.0);//the linear approximation angle of where the robot might be
+        //randomness added to account for fluctuations in acceleration of the enemy
+        setTurnGunRight(Utils.normalRelativeAngleDegrees(adjustAng+linearAprox));//approximately where the enemy should be
+        setFire(power);
 
-        setTurnGunRight(Utils.normalRelativeAngleDegrees(absBearing -
-                getGunHeading() + (e.getVelocity() * Math.sin(e.getHeading() -
-                absBearing) / BULLET_SPEED)));
-
-        setFire(BULLET_POWER);
-
-        setTurnRadarRight(Utils.normalRelativeAngleDegrees(absBearing - getRadarHeading()) *2.5);
+        setTurnRadarRight(Utils.normalRelativeAngleDegrees(absBearing - getRadarHeading()) *2.5);//wide scope radar
     }
-
-        public void onHitWall (HitWallEvent e){
+        public void onHitWall (HitWallEvent e){//switches direction if a wall is hit
         dir = -dir;
     }
     }
