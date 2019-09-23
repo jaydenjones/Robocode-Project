@@ -67,11 +67,7 @@ public class VirtualBoy extends TeamRobot
             setFire(firePower);
             execute();
         }
-        if (event.getName().contains("Megazord")) {
-
-            isTeammate(event.getName());
-            return;
-        }
+      
         if (isTeammate((event.getName()))){
 
             return;
@@ -80,21 +76,19 @@ public class VirtualBoy extends TeamRobot
         scan();
 
 
-
-
     }
 
-    public void onHitByBullet(HitByBulletEvent hitByBulletEvent){
+//     public void onHitByBullet(HitByBulletEvent hitByBulletEvent){
 
 
 
-    }
+//     }
 
 
 
-    public void onHitRobot(HitRobotEvent e) {
+//     public void onHitRobot(HitRobotEvent e) {
 
-    }
+//     }
 
 
 
